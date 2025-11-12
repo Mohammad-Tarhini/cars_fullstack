@@ -25,6 +25,10 @@ getCarById();
 //transform getCarByID to getCars()
 //if the id is set? then we retrieve the specific car 
 // if no ID, then we retrieve all the cars
-
+function getCars(){
+    global connection;
+    $cars=car::findall($connection,$id);
+    echo ResponseServices::response(200,$cars)
+}
 
 ?>
