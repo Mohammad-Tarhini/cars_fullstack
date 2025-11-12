@@ -27,22 +27,21 @@ abstract class Model{
     }
 
     $result = $query->get_result();
-    $carsData = [];
+    $allData = [];
 
     while ($row = $result->fetch_assoc()) {
-        $carsData[] = $row;
+        $allData[] = $row;
     }
 
-    if (empty($carsData)) {
+    if (empty($Data)) {
         return null; // return null if no rows
     }
 
-    $carsObjects = [];
-    foreach ($carsData as $carData) {
-        $carsObjects[] = new static($carData);
+    $Objects = [];
+    foreach ($allData as $Data) {
+        $Objects[] = new static($Data);
     }
-
-    return $carsObjects;
+    return $Objects;
     }
 
 
@@ -64,26 +63,70 @@ abstract class Model{
     }
 
 
-    public function update(mysqli $connection ){
-        $sql=printf("update %s  where %s=?",static::$table,static::$primary_key);
-        $query=$connection->prepare($sql);
-        $query->bind_param("i",$id);
-        return $query->execute();
-    }
-    public static insert(mysqli $connection ){
-        $sql=printf("insert into %s values()",static::$table,static::$primary_key);
-        $query=$connection->prepare($sql);
-        $query
-        }
+   
 
+
+public function insert(mysqli $connection)
+{
+    $data = $this->toArray();
+
+    $keys = array_keys($data);
+    $placeHolders = implode(',', array_fill(0, count($keys), '?'));
+    $sql = sprintf("INSERT INTO %s (%s) VALUES (%s)", static::$table, implode(',', $keys), $placeHolders);
+
+    $query = $connection->prepare($sql);
 
     
-
-
-    public static insert(mysqli $connection){
-        $sql=sprintf("insert into % ()")
+    $types = '';
+    $values = [];
+    foreach ($data as $value) {
+        if (is_int($value)) $types .= 'i';
+        elseif (is_float($value)) $types .= 'd';
+        else $types .= 's';
+        $values[] = $value;
     }
 
-
+    $query->bind_param($types, ...$values);
+    return $query->execute();
 }
+
+ public function update(mysqli $connection ){
+
+    $data = $this->toArray();
+
+    $setParts = [];
+    $values = [];
+    $types = '';
+
+    foreach ($data as $key => $value) {
+        if (isset($value) && $key !== static::$primary_key) {
+            $setParts[] = "$key = ?";
+            $values[] = $value;
+
+            
+            if (is_int($value)) $types .= 'i';
+            elseif (is_float($value)) $types .= 'd';
+            else $types .= 's';
+        }
+    }
+
+    $sql = sprintf(
+        "UPDATE %s SET %s WHERE %s = ?",
+        static::$table,
+        implode(', ', $setParts),
+        static::$primary_key
+    );
+
+    $query = $connection->prepare($sql);
+
+    
+    $values[] = $this->id;
+    $types .= 'i';
+
+    $query->bind_param($types, ...$values);
+
+    return $query->execute();
+
+
+ }}
 ?>
