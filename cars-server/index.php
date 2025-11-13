@@ -1,5 +1,6 @@
 <?php 
 require_once("./services/ResponseService.php");
+require_once("./routes/api.php");
 
 $base_dir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
 $request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -15,9 +16,13 @@ if ($request == '') {
 //array of routes - a mapping between routes and controller name and method!
 //remove routes from here!! 
 $apis = [
-    '/cars'         => ['controller' => 'CarController', 'method' => 'getCarByID'],
-    '/users'         => ['controller' => 'UserController', 'method' => 'getUsers']
+    '/cars/getCarByID'         => ['controller' => 'CarController', 'method' => 'getCarByID'],
+    '/cars/getAllCars'         => ['controller' => 'CarController', 'method' => 'getAllCars'],
+    '/cars/deleteCarById'     =>['controller'=>'CarController' ,'method'=>'deleteCarById'],
+    '/cars/addCar'           =>['controller'=>'CarController' , 'method'=>'addCar'],
+    '/cars/updateCar'        =>['controller'=>'CarController' ,'method'=>'updateCar']
 ];
+
 
 if (isset($apis[$request])) {
     $controller_name = $apis[$request]['controller']; 

@@ -1,7 +1,7 @@
 <?php
-require_once("../models/Car.php");
-require_once("../connection/connection.php");
-require_once("../services/ResponseService.php");
+require_once(__DIR__ . "/../models/Car.php");
+require_once(__DIR__ . "/../connection/connection.php");
+require_once(__DIR__ . "/../services/ResponseService.php");
 
 class CarServices {
     public static function deleteByIdHelper($connection, $id) {

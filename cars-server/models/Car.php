@@ -2,7 +2,7 @@
 include("Model.php");
 
 class Car extends Model {
-    private int $id;
+    private ?int $id;
     private string $name;
     private string $year;
     private string $color;
@@ -10,7 +10,7 @@ class Car extends Model {
     protected static string $table = "cars";
 
     public function __construct(array $data){
-        $this->id = $data["id"];
+        $this->id = $data['id'] ?? null;
         $this->name = $data["name"];
         $this->year = $data["year"];
         $this->color = $data["color"];

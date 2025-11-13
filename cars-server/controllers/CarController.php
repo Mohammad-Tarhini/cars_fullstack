@@ -1,8 +1,8 @@
 <?php
-require_once("../models/Car.php");
-require_once("../connection/connection.php");
-require_once("../services/ResponseService.php");
-require_once("../services/DeleteService.php");
+require_once(__DIR__ . "/../models/Car.php");
+require_once(__DIR__ . "/../connection/connection.php");
+require_once(__DIR__ . "/../services/ResponseService.php");
+require_once(__DIR__."/../services/CarServices.php");
 
 
 class CarController {
@@ -26,7 +26,7 @@ class CarController {
     }
     function getAllCars(){
         global $connection;
-        $cars=Car::findAll();
+        $cars=Car::findAll($connection);
         if ($cars && count($cars) > 0) {
         echo ResponseService::response(200, $cars);
     } else {
@@ -36,7 +36,7 @@ class CarController {
     }
 
     function deleteCarById(){
-        globel $connection;
+        global $connection;
         if(isset($_GET["id"])){
             $id = $_GET["id"];
         }else{
@@ -52,25 +52,23 @@ class CarController {
     function addCar(){
          global $connection;
           if (!isset($_POST['name'], $_POST['year'], $_POST['color'])) {
-        echo ResponsiveServices::response(400, "Missing data");
+        echo ResponseService::response(400, "Missing data");
         return;
          }
-        $car=new car([$name,$year,$color]);
-       if($car->insert($connection)){
-        echo ResponsiveServices::response(200,"is added");
-       }else{
-        echo Responsive::response(400,"there is problem");
-       }
+         $name = $_POST['name'];
+          $year = $_POST['year'];
+          $color = $_POST['color'];
 
         $car = new Car([
+        
         'name'  => $name,
         'year'  => $year,
         'color' => $color
         ]);
          if ($car->insert($connection)) {
-        echo ResponsiveServices::response(200, "Car added successfully");
+        echo ResponseService::response(200, "Car added successfully");
         } else {
-        echo ResponsiveServices::response(400, "There was a problem");
+        echo ResponseService::response(400, "There was a problem");
         }
     }
 
@@ -81,7 +79,7 @@ class CarController {
 
     
     if (empty($_POST["id"])) {
-        echo ResponseServices::response(500, "Enter ID please");
+        echo ResponseService::response(500, "Enter ID please");
         return;
     }
 
@@ -94,7 +92,7 @@ class CarController {
     $car = Car::find($connection, $id);
 
     if (!$car) {
-        echo ResponseServices::response(404, "Car not found");
+        echo ResponseService::response(404, "Car not found");
         return;
     }
 
@@ -105,9 +103,9 @@ class CarController {
 
     
     if ($car->update($connection)) {
-        echo ResponseServices::response(200, "Excellent");
+        echo ResponseService::response(200, "Excellent");
     } else {
-        echo ResponseServices::response(400, "Not updated");
+        echo ResponseService::response(400, "Not updated");
     }
 }
 }

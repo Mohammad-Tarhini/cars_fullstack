@@ -57,7 +57,7 @@ abstract class Model{
     public function delete(mysqli $connection){
         $sql =sprintf("delete from %s where %s=?",static::$table,static::$primary_key);
         $query=$connection->prepare($sql);
-        $query->bind_param("i",$this->id);
+        $query->bind_param("i",$this->getID());
         return $query->execute();
 
     }
@@ -72,6 +72,7 @@ public function insert(mysqli $connection)
 
     $keys = array_keys($data);
     $placeHolders = implode(',', array_fill(0, count($keys), '?'));
+    
     $sql = sprintf("INSERT INTO %s (%s) VALUES (%s)", static::$table, implode(',', $keys), $placeHolders);
 
     $query = $connection->prepare($sql);
@@ -120,7 +121,7 @@ public function insert(mysqli $connection)
     $query = $connection->prepare($sql);
 
     
-    $values[] = $this->id;
+    $values[] = $this->getID();
     $types .= 'i';
 
     $query->bind_param($types, ...$values);
